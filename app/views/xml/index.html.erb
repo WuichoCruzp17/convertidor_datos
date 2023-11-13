@@ -1,0 +1,13 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+      <div class="form-group">
+    <%= form_tag({ action: :upload }, multipart: true, class: 'form-group') do %>
+      <label for="fileInput">Seleccionar Archivo</label>
+      <%= file_field_tag :xml_file, class: 'form-control', accept: '.xml' %>
+
+      <%= submit_tag 'Subir Archivo', class: 'btn btn-primary' %>
+    <% end %>
+    </div>
+  </div>
+  <div class="panel-footer">Panel footer</div>
+</div>

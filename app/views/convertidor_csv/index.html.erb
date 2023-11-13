@@ -1,0 +1,40 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div class="form-group">
+      <label for="fileInput">Seleccionar Archivo</label>
+      <input type="file" id="csvFileInput" class="form-control" accept=".csv">
+        <%= csrf_meta_tags %>
+    </div>
+  </div>
+  <div class="panel-footer"><button id="uploadButton" class="btn btn-primary">Subir Archivo</button></div>
+</div>
+
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#menu1">Tabla</a></li>
+    <li><a data-toggle="tab" href="#menu2">XML</a></li>
+    <li><a data-toggle="tab" href="#menu3">JSON</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="menu1" class="tab-pane fade">
+      <div class="table-responsive">
+  <table class="table" id="table">
+
+  </table>
+</div>
+    </div>
+    <div id="menu2" class="tab-pane fade">
+      <div class="form-group">
+          <textarea class="form-control" rows="5" id="comment"></textarea>
+      </div>
+    </div>
+    <div id="menu3" class="tab-pane fade">
+      <div class="form-group">
+          <textarea class="form-control" rows="5" id="json"></textarea>
+      </div>
+    </div>
+  </div>
+
+
+
+<script src="/js/csvController.js"></script>

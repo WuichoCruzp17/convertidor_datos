@@ -1,0 +1,4 @@
+{
+    "standardRuby.autofix": true,
+    "standardRuby.commandPath": "fix"
+}
