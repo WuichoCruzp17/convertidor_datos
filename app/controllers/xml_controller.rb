@@ -3,64 +3,42 @@ class XmlController < ApplicationController
 
   def upload
     if params[:xml_file].present?
-      # Accede al archivo cargado
       uploaded_file = params[:xml_file]
-
-      # Verifica si el archivo es un archivo XML
       if File.extname(uploaded_file.original_filename).casecmp('.xml') == 0
-        # Lee el contenido del archivo
-        xml_content =File.open(uploaded_file) { |f| Nokogiri::XML(f) }
-
-        # Analiza el contenido XML con Nokogiri
-        xml_data = []
-        xml_data = get_data(xml_content.root)
-
-        # Convierte el objeto Ruby en JSON
-        json_data = xml_data.to_json
-
-        # Puedes imprimir el JSON resultante o realizar otras acciones según tus necesidades
-        puts json_data
-      else
-        flash[:error] = 'El archivo no es un archivo XML válido.'
-      end
-    else
-      flash[:error] = 'No se seleccionó ningún archivo.'
-    end
-
-    # Redirige a la página anterior u otra página según tus necesidades
-    redirect_to request.referrer
-  end
-
-  def get_data(element)
-    xml_data = {}
-
-    if element.elements.empty?
-      xml_data[element.name] = element.text
-    else
-      xml_data[element.name] = {}
-      element.elements.each do |child_element|
-        xml_data[element.name][child_element.name] = child_element.text
+        xml_data = File.read(uploaded_file)
+        csv_data = xml_to_csv(xml_data)
+        puts "CSV ->#{csv_data}"
+        #render plain: csv_data
       end
     end
-
-    xml_data[element.name]["attributes"] = extract_attributes(element)
-    return xml_data
   end
 
-  def extract_attributes(element)
-    attributes = element.attributes
-    atributos = []
+  def xml_to_csv(xml_data)
+    begin
+      doc = Nokogiri::XML(xml_data)
+      rows = []
+      headers = []
 
-    attributes.each do |name, value|
-      atributo = { element.name => { "key" => name, "value" => value } }
-      atributos.push(atributo)
+      doc.root.traverse do |node|
+        if node.element?
+          headers << node.name unless headers.include?(node.name)
+        end
+      end
+
+      rows << headers.to_csv
+      puts "Elemento 0 -> #{doc.root.xpath('/*')[0]}"
+      doc.root.xpath('/*').each do |row|
+        row_data = []
+        headers.each do |header|
+          row_data << row.at(header)&.text
+        end
+        rows << row_data.to_csv
+      end
+
+      return rows.join
+    rescue => e
+      puts "Error al convertir datos XML a CSV: #{e.message}"
+      return nil
     end
-
-    element.children.each do |child|
-      atributos.concat(extract_attributes(child)) if child.element?
-    end
-
-    return atributos
   end
-
 end
